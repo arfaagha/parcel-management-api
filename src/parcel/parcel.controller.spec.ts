@@ -15,4 +15,16 @@ describe('ParcelController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+  
+  it('should have a create function', ()=>{
+    expect(typeof controller.create).toBe('function');
+  });
+
+  it('should have a get function', ()=>{
+    expect(typeof controller.get).toBe('function');
+  });
+
+  it('should have a getBySku function', ()=>{
+    expect(typeof controller.getBySku).toBe('function');
+  });
 });
