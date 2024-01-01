@@ -72,7 +72,7 @@ beforeAll(async () => {
   });
 
   it('should return a list of parcels when get is called',()=>{
-    expect(controller.get()).not.toBeNull();
+    expect(controller.get({})).not.toBeNull();
   });
 
   it('should return a parcel with specified SKU',()=>{

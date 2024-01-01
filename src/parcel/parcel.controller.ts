@@ -1,25 +1,25 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ParcelService } from './parcel.service';
 import { ParcelDto } from './dto/parcel.dto';
 
 @Controller('parcels')
 export class ParcelController {
-    constructor(private service: ParcelService){
 
+    constructor(private readonly parcelService: ParcelService){
     }
 
     @Get('sku')
-    getBySku(sku: string){
-        this.service.getBySku(sku);
+   getBySku(@Param('sku') sku: string){
+        return this.parcelService.getBySku(sku);
     }
 
     @Get()
-    get(){
-        this.service.get();
+    get(@Query() filter: any){
+        return this.parcelService.get();
     }
 
     @Post()
     create(@Body() form: ParcelDto){
-        this.service.create(form);
+        return this.parcelService.create(form);
     }
 }
