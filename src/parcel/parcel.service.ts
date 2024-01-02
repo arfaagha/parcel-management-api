@@ -3,6 +3,7 @@ import { ParcelDto } from "./dto/parcel.dto";
 import { Parcel } from "./entities/parcel.entity";
 import { ParcelRepository } from "./parcel.repository";
 import { InjectRepository } from "@nestjs/typeorm";
+import { filterDto } from "./dto/filter.dto";
 
 @Injectable()
 export class ParcelService {
@@ -11,10 +12,19 @@ export class ParcelService {
     constructor(@InjectRepository(Parcel) private parcelRepo : ParcelRepository){}
 
 
-    get(){
+    async get(filter: filterDto): Promise<ParcelDto| ParcelDto[] | null>{
+       
         this.logger.log('inside get call');
 
-        return 'service is responsible for get()';
+        // TypeORM does not support unions
+        // We therefore use CTE to create our own query
+        // more on: https://typeorm.io/select-query-builder#common-table-expressions
+
+        const result= await this.parcelRepo.createQueryBuilder('parcel').orderBy('parcel.deliveryDate', 'ASC').getMany();
+        
+        if(result) return ParcelDto.fromEntity(result);
+
+        return null;
     }
 
     async create(parcel: ParcelDto): Promise<ParcelDto| ParcelDto[] | null>{

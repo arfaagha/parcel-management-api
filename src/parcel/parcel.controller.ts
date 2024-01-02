@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ParcelService } from './parcel.service';
 import { ParcelDto } from './dto/parcel.dto';
+import { filterDto } from './dto/filter.dto';
 
 @Controller('parcels')
 export class ParcelController {
@@ -23,8 +24,8 @@ export class ParcelController {
     }
 
     @Get()
-    get(@Query() filter: any){
-        return this.parcelService.get();
+    get(@Query() filter: filterDto){
+        return this.parcelService.get(filter);
     }
 
     @Post()
