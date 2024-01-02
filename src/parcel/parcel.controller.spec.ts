@@ -2,13 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ParcelController } from './parcel.controller';
 import { ParcelDto } from './dto/parcel.dto';
 import { ParcelService } from './parcel.service';
-import { Logger } from '@nestjs/common';
+import { mockDeep } from 'jest-mock-extended';
+import { CustomLogger } from 'src/utils/custom.logger';
+import { ParcelRepository } from './parcel.repository';
 
 describe('ParcelController', () => {
 
   let controller: ParcelController;
   let mockService : ParcelService;
-  let logger: Logger;
+  let logger: CustomLogger = mockDeep<CustomLogger>();
 
   //#region Mocking
   const mockParcelDto: ParcelDto = {
@@ -21,7 +23,9 @@ describe('ParcelController', () => {
     deliveryDate: new Date()
   };
 
-  const mockParcelService: ParcelService = {
+  jest.mock('./parcel.service');
+
+  const mockParcelService = {
     create: jest.fn((parcel: ParcelDto) => {
       return Promise.resolve(mockParcelDto);
     }),
@@ -33,8 +37,7 @@ describe('ParcelController', () => {
     getBySku: jest.fn((sku: string) => {
       return Promise.resolve(mockParcelDto);
     }),
-    logger: jest.fn(),
-    parcelRepo: new ParcelRepository,
+    parcelRepo: mockDeep<ParcelRepository>,
     createTracker: function (): string {
       throw new Error('Function not implemented.');
     }
@@ -44,17 +47,25 @@ describe('ParcelController', () => {
 beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ParcelController],
-      providers: [ParcelService, {
-        provide: Logger,
-        useValue: {
-          log: jest.fn(),
+      providers: [ParcelService, 
+        {
+        provide: CustomLogger,
+        useValue: logger,
         },
-      },],
+        {
+          provide: ParcelService,
+          useValue: {
+            create: jest.fn(),
+            getBySku: jest.fn(),
+            get: jest.fn(),
+          },
+        },
+    ],
     }).overrideProvider(ParcelService).useValue(mockParcelService).compile();
 
     controller = module.get<ParcelController>(ParcelController);
     mockService = module.get<ParcelService>(ParcelService);
-    logger = module.get<Logger>(Logger);
+    logger = module.get<CustomLogger>(CustomLogger);
   });
 
   it('should be defined', () => {
@@ -78,7 +89,7 @@ beforeAll(async () => {
   });
 
   it('should return a list of parcels when get is called',()=>{
-    expect(controller.get({})).not.toBeNull();
+    expect(controller.get({country: 'mock', description: 'mock'})).not.toBeNull();
   });
 
   it('should return a parcel with specified SKU',()=>{
