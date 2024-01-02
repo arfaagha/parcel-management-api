@@ -1,12 +1,61 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { ParcelDto } from "./dto/parcel.dto";
+import { Parcel } from "./entities/parcel.entity";
+import { ParcelRepository } from "./parcel.repository";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class ParcelService {
-
-    get(){}
-
-    create(parcel: ParcelDto){}
+    private readonly logger = new Logger(ParcelService.name);
     
-    getBySku(sku: string){}
+    constructor(@InjectRepository(Parcel) private parcelRepo : ParcelRepository){}
+
+
+    get(){
+        this.logger.log('inside get call');
+
+        return 'service is responsible for get()';
+    }
+
+    async create(parcel: ParcelDto): Promise<ParcelDto| ParcelDto[] | null>{
+        
+        this.logger.log('inside create call');
+
+        const newParcel = {track: this.createTracker(), ...parcel};
+
+        return ParcelDto.fromEntity(await this.parcelRepo.save(this.parcelRepo.create(newParcel)));
+    }
+
+    createTracker(): string {
+        let timeNow: number = new Date().getTime();
+
+        // Map to store 62 possible characters 
+        let map = "abcdefghijklmnopqrstuvwxyzABCDEF"
+        "GHIJKLMNOPQRSTUVWXYZ0123456789"; 
+
+        let shorturl = []; 
+
+        // Convert given integer id to a base 62 number 
+        while (timeNow) 
+        { 
+            // use above map to store actual character in short url 
+            shorturl.push(map[timeNow % 62]); 
+            timeNow = Math.floor(timeNow / 62); 
+        } 
+
+        // Reverse shortURL to complete base conversion 
+        shorturl.reverse(); 
+
+        return shorturl.join(""); 
+    }
+    
+    async getBySku(sku: string): Promise<ParcelDto | ParcelDto[] | null>{
+        
+        this.logger.log('inside getBySku call');
+        const result = await this.parcelRepo.createQueryBuilder('parcel').where('parcel.sku = :sku', { sku }).getOne();
+        if(result){
+            return ParcelDto.fromEntity(result);
+        }
+        return null;
+    }
 }

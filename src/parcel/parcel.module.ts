@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { ParcelService } from './parcel.service';
 import { ParcelController } from './parcel.controller';
 
-import { ConfigModule } from '@nestjs/config';
-import { DotenvConfigOptions } from 'dotenv';
+import { AppModule } from 'src/app.module';
 
 @Module({
+    imports: [AppModule],
     controllers: [ParcelController],
     providers: [ParcelService]
 })
