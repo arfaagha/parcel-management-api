@@ -22,21 +22,15 @@ describe('ParcelController', () => {
 
   const mockParcelService: ParcelService = {
     create: jest.fn((parcel: ParcelDto)=>{
-      return{
-        default:{
-          mockParcelDto
-      },
-    };
-    }),
+     return Promise.resolve(mockParcelDto);
+      }),
 
     get: jest.fn(()=>{
       return [{...mockParcelDto}];
     }),
 
     getBySku: jest.fn((sku: string)=>{
-      return{
-        mockParcelDto
-      };
+      return Promise.resolve(mockParcelDto);
     })
   };
 //#endregion
@@ -64,7 +58,7 @@ beforeAll(async () => {
   });
 
   it('should have a getBySku function', ()=>{
-    expect(typeof controller.getBySku).toBe('function');
+    expect(typeof controller.isSkuValid).toBe('function');
   });
 
   it('should create a parcel and return the newly created parcel',()=>{
@@ -76,7 +70,7 @@ beforeAll(async () => {
   });
 
   it('should return a parcel with specified SKU',()=>{
-    expect(controller.getBySku('1111-11111111-1111')).not.toBeNull();
+    expect(controller.isSkuValid('1111-11111111-1111')).not.toBeNull();
   });
 
 });
