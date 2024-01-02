@@ -10,6 +10,7 @@ import { PostgresConfigService } from './config/database/config.service';
 import { Parcel } from './parcel/entities/parcel.entity';
 import { ParcelRepository } from './parcel/parcel.repository';
 import { TypeOrmExModule } from './custom-repository/typeorm-ex.module';
+import  { CustomLogger } from './utils/custom.logger';
 
 @Module({
   imports: [
@@ -23,8 +24,10 @@ import { TypeOrmExModule } from './custom-repository/typeorm-ex.module';
       inject: [PostgresConfigService],
     }),
     TypeOrmModule.forFeature([Parcel]),
-    TypeOrmExModule.forCustomRepository([ParcelRepository]),],
+    TypeOrmExModule.forCustomRepository([ParcelRepository]),
+    
+  ],
   controllers: [AppController, ParcelController],
-  providers: [AppService, ParcelService],
+  providers: [AppService, ParcelService, CustomLogger],
 })
 export class AppModule {}
