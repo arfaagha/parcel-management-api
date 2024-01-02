@@ -1,15 +1,15 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ParcelDto } from "./dto/parcel.dto";
 import { Parcel } from "./entities/parcel.entity";
 import { ParcelRepository } from "./parcel.repository";
 import { InjectRepository } from "@nestjs/typeorm";
 import { filterDto } from "./dto/filter.dto";
+import { CustomLogger } from "src/utils/custom.logger";
 
 @Injectable()
 export class ParcelService {
-    private readonly logger = new Logger(ParcelService.name);
     
-    constructor(@InjectRepository(Parcel) private parcelRepo : ParcelRepository){}
+    constructor(@InjectRepository(Parcel) private parcelRepo : ParcelRepository, private readonly logger: CustomLogger){}
 
 
     async get(filter: filterDto): Promise<ParcelDto| ParcelDto[] | null>{
