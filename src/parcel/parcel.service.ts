@@ -17,10 +17,14 @@ export class ParcelService {
         this.logger.log('inside get call');
 
         // TypeORM does not support unions
-        // We therefore use CTE to create our own query
-        // more on: https://typeorm.io/select-query-builder#common-table-expressions
+        // We therefore have to create our own query
+        // more on: https://typeorm.io/select-query-builder
 
-        const result= await this.parcelRepo.createQueryBuilder('parcel').orderBy('parcel.deliveryDate', 'ASC').getMany();
+        const result= await this.parcelRepo.query(`
+        SELECT sku, description, street AS "streetAddress", town, country, "deliveryDate",
+        CASE WHEN country='estonia' THEN 1 ELSE 2 END AS grp
+        FROM parcel
+        order by grp asc, parcel."deliveryDate" asc`);
         
         if(result) return ParcelDto.fromEntity(result);
 
