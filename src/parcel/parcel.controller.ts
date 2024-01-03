@@ -24,12 +24,12 @@ export class ParcelController {
     }
 
     @Get()
-    get(@Query() filter: filterDto){
-        return this.parcelService.get(filter);
+    async get(@Query() filter: filterDto){
+        return await this.parcelService.get(filter);
     }
 
     @Post()
-    create(@Body() form: ParcelDto){
-        return this.parcelService.create(form);
+    async create(@Body() form: any){
+        return await this.parcelService.create(form.parcel);
     }
 }
