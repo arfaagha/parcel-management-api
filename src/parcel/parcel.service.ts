@@ -22,7 +22,7 @@ export class ParcelService {
 
         const result= await this.parcelRepo.query(`
         SELECT sku, description, street AS "streetAddress", town, country, "deliveryDate",
-        CASE WHEN country='estonia' THEN 1 ELSE 2 END AS grp
+        CASE WHEN LOWER(country)=LOWER('estonia') THEN 1 ELSE 2 END AS grp
         FROM parcel
         order by grp asc, parcel."deliveryDate" asc`);
         
