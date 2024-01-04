@@ -16,7 +16,7 @@ export class Parcel{
     sku: string;
 
     @Column({
-        length:120,
+        length:200,
         type: "varchar",
         nullable: false
     })
