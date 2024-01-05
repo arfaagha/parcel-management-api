@@ -11,6 +11,8 @@ import { Parcel } from './parcel/entities/parcel.entity';
 import { ParcelRepository } from './parcel/parcel.repository';
 import { TypeOrmExModule } from './custom-repository/typeorm-ex.module';
 import  { CustomLogger } from './utils/custom.logger';
+import { APP_FILTER } from '@nestjs/core';
+import { GlobalExceptionFilter } from './utils/global-exception.filter';
 
 @Module({
   imports: [
@@ -28,6 +30,9 @@ import  { CustomLogger } from './utils/custom.logger';
     
   ],
   controllers: [AppController, ParcelController],
-  providers: [AppService, ParcelService, CustomLogger],
+  providers: [AppService, ParcelService, CustomLogger,{
+    provide: APP_FILTER,
+    useClass: GlobalExceptionFilter,
+  },],
 })
 export class AppModule {}
